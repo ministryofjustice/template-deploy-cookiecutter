@@ -1,0 +1,107 @@
+dev:
+  ec2:
+    auto_scaling:
+      desired: 2
+      max: 3
+      min: 0
+    tags:
+      Role: docker
+      Apps: template
+    parameters:
+      KeyName: default
+      InstanceType: t2.micro
+    block_devices:
+      - DeviceName: /dev/sda1
+        VolumeSize: 10
+      - DeviceName: /dev/sdf
+        VolumeSize: 10
+    # These security groups will be added to all the instances in the ASG.
+    security_groups:
+      MyBaseSG:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          # This is the ext IP on the MoJD network so that we can ssh.
+          CidrIp: 81.134.202.29/32
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          # This is the IP of ci.dsd.io which we want to be able to ssh
+          CidrIp: 54.229.117.192/32
+      WebServer:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId:
+            # This refers to the default creates secuirty group for
+            # 'test-template-ext' ELB. If you change the name of the ELB,
+            # change this string to.
+            Ref: DefaultSGtesttemplateext
+      MySaltSG:
+        - IpProtocol: tcp
+          FromPort: 4505
+          ToPort: 4506
+          SourceSecurityGroupId:
+            Ref: MyBaseSG
+  elb:
+    - name: test-template-ext
+      # This zone must exist in the AWS account you are using.
+      hosted_zone: mmb.et.dsd.io.
+      scheme: internet-facing
+      # This should match the name of a certificate in the ssl section.
+      certificate_name: my-cert
+      listeners:
+        - LoadBalancerPort: 80
+          InstancePort: 80
+          Protocol: TCP
+        - LoadBalancerPort: 443
+          InstancePort: 80
+          Protocol: HTTPS
+      # There is a default security group called 'DefaultSG' + elb name (with
+      # '_' and '-' removed). Below is the default if no 'security_groups' key
+      # is present.
+      #
+      # security_groups:
+      #   DefaultSGtesttemplateext:
+      #       - IpProtocol: tcp
+      #         FromPort: 443
+      #         ToPort: 443
+      #         CidrIp: 0.0.0.0/0
+      #       - IpProtocol: tcp
+      #         FromPort: 80
+      #         ToPort: 80
+      #         CidrIp: 0.0.0.0/0
+  # This includes some extra permissions which makes it possible
+  # to deploy easily from Jenkins
+  includes:
+    - ./cloudformation/iam-deploy.json
+  s3:
+    static-bucket-name: mmb-test
+  rds:
+    storage: 5
+    storage-type: gp2
+    backup-retention-period: 1
+    db-name: test
+    db-master-username: testuser
+    # This should live in the encrypted secrets file
+    db-master-password: testpass
+    instance-class: db.t2.micro
+    multi-az: false
+    db-engine: postgres
+    db-engine-version: 9.3.5
+  ssl:
+    # This is the name of the certificate to reference in the elb section.
+    my-cert:
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        blahblahblah
+        -----END CERTIFICATE-----
+      # This should live in the encrypted secrets file, but the cert and chain are fine here.
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        blahblahblah
+        -----END RSA PRIVATE KEY-----
+      chain: |
+        -----BEGIN CERTIFICATE-----
+        blahblahblah
+        -----END CERTIFICATE-----

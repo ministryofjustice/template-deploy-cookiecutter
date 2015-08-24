@@ -1,0 +1,79 @@
+{
+    "Outputs":{
+        "deployrole": {
+          "Description": "IAM role for deploy user",
+          "Value": {"Fn::GetAtt" : [ "CrossAccountRole" , "Arn" ]}
+        }
+    },
+    "Resources": {
+        "CrossAccountRole" : {
+            "Type" : "AWS::IAM::Role",
+            "Properties" : {
+                "AssumeRolePolicyDocument" : {
+                    "Statement" : [
+                         {
+                             "Effect" : "Allow",
+                             "Principal" : {
+                                 "AWS": "arn:aws:iam::880656497252:root"
+                             },
+                             "Action" : [
+                                 "sts:AssumeRole"
+                             ]
+                         }
+                    ]
+                }
+            }
+        },
+        "DeployUserPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "DeployPolicy",
+                "PolicyDocument": {
+                    "Statement": [
+                        { 
+                            "Action": [ 
+                                        "ec2:Describe*",
+                                        "route53:Get*",
+                                        "route53:List*",
+                                        "cloudformation:DescribeStacks",
+                                        "cloudformation:ListStackResources",
+                                        "autoscaling:DescribeAutoScalingGroups",
+                                        "autoscaling:CreateOrUpdateTags",
+                                        "autoscaling:DescribeTags"
+                                      ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        }
+                    ] 
+                },
+                "Roles" : [
+                        { "Ref" : "CrossAccountRole" }
+                ]
+            }
+        },
+        "S3DeployUserPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "S3DeployPolicy",
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:Get*",
+                                "s3:Put*",
+                                "s3:List*"
+                            ],
+                            "Resource" : { "Fn::Join" : [
+                              "", [ "arn:aws:s3:::", { "Ref" : "StaticBucket" } , "/*" ]
+                            ] }
+                        }
+                    ] 
+                },
+                "Roles" : [
+                        { "Ref" : "CrossAccountRole" }
+                ]
+            }
+        }
+    }
+}

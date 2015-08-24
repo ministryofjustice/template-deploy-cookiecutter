@@ -1,0 +1,2 @@
+{application: {{cookiecutter.project_name}}, aws: mojdsd, blocking: true, config: ./cloudformation/{{cookiecutter.project_name}}_{{cookiecutter.environment}}.yaml,
+environment: {{cookiecutter.environment}}, passwords: ./cloudformation/{{cookiecutter.project_name}}_{{cookiecutter.environment}}-secrets.yaml}
