@@ -1,0 +1,3 @@
+base:
+  '*':
+    - moj-docker-deploy

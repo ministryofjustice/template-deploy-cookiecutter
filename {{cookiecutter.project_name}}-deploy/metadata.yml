@@ -1,0 +1,2 @@
+dependencies:
+  - git@github.com:ministryofjustice/moj-docker-deploy-formula.git
