@@ -100,14 +100,9 @@ dev:
 {% if cookiecutter.with_ssl != "False" %}
   ssl:
     # This is the name of the certificate to reference in the elb section.
-    my-cert:
+    {{cookiecutter.project_name}}_{{cookiecutter.environment}}-cert:
       cert: |
-        -----BEGIN CERTIFICATE-----
-        blahblahblah
-        -----END CERTIFICATE-----
-      # This should live in the encrypted secrets file, but the cert and chain are fine here.
+        {{ cookiecutter.ssl_cert }}
       chain: |
-        -----BEGIN CERTIFICATE-----
-        blahblahblah
-        -----END CERTIFICATE-----
+        {{ cookiecutter.ssl_chain }}
 {% endif %}

@@ -1,12 +1,30 @@
 {
     "project_name": "helloworld",
+    "project_email": "platforms@digital.justice.gov.uk",
     "environment": "dev",
     "project_description": "The is the {{ cookiecutter.project_name }} project",
     "master_zone": "dsd.io",
     "dns_name": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}-{{ cookiecutter.environment }}",
-    "with_ssl": false,
-    "with_rds": false,
     "project_apps": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
-    "docker_registry": "registry.service.dsd.io",
-    "docker_container": "{{ cookiecutter.project_apps }}"
+    "docker_container": "{{ cookiecutter.project_apps }}",
+    "registry_user": "",
+    "registry_password": "",
+    "with_ssl": "False",
+{# Do SSL specific questions %}
+{% if cookiecutter.with_ssl != "False" %}
+	"ssl_cert":  "",
+	"ssl_key":  "",
+	"ssl_chain":  "",
+{% endif %}
+    "with_rds": "False",
+{# Do RDS specific questions %}
+{% if cookiecutter.with_rds != "False" %}
+{% endif %}
+    "with_monitoring":  "False",
+{# Do monitoring specific questions %}
+{% if cookiecutter.with_monitoring != "False" %}
+	"stunnel_cert":  "",
+	"stunnel_key":  "",
+	"stunnel_chain":  "",
+{% endif %}
 }
