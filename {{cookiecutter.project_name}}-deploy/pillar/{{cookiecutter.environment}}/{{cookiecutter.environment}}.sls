@@ -25,7 +25,7 @@ nginx:
   version: 1.4.6-1ubuntu3.3
 
 docker_envs:
-  dev.blah.dsd.io:
+  {{cookiecutter.project_name}}.{{cookiecutter.master_zone}}:
     # this is the port you should direct your ELB to
     nginx_port: 80
     ssl:
@@ -38,14 +38,14 @@ docker_envs:
       # This key is a custom name for the container,
       # it can be anything and is used by salt to name
       # upstart jobs and for the deploy task.
-      another_app:
+      {{cookiecutter.project_apps}}:
         # This is the name of the container as it is tagged
         # in docker
-        name: tutum/hello-world
+        name: {{cookiecutter.docker_container}}
         # You can use this key to override the default_registry
         # Note, to use the default docker hub registry you need to set the 
         # registry to be empty as shown below
-        registry: 
+        registry: {{cookiecutter.docker_registry}}
         # This is useful for custom ELB checks
         # if you have the SSL redirect enabled (default)
         http_locations:
@@ -65,19 +65,4 @@ docker_envs:
         # note you get some free variables for database details etc.
         envvars:
           ENV_VAR1: value
-          ENV_VAR2: value2
-          
-# These containers are not proxied by nginx
-containers:
-  # A minimal non-proxied container application
-  nonproxied_redis_app:
-    name: redis
-    registry: 
-    ports:
-      app:
-        host: 6379
-        container: 6379
-    envvars:
-      ENV_VAR1: nonproxied_app_value_1
-      ENV_VAR2: nonproxied_app_value_2
-
+         

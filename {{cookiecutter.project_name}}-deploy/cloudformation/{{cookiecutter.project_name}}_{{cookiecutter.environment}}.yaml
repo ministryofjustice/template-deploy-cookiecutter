@@ -1,4 +1,5 @@
 dev:
+  master_zone: {{cookiecutter.master_zone}}
   ec2:
     auto_scaling:
       desired: 2
@@ -6,7 +7,7 @@ dev:
       min: 0
     tags:
       Role: docker
-      Apps: template
+      Apps: {{cookiecutter.project_apps}}
     parameters:
       KeyName: default
       InstanceType: t2.micro
@@ -36,7 +37,7 @@ dev:
             # This refers to the default creates secuirty group for
             # 'test-template-ext' ELB. If you change the name of the ELB,
             # change this string to.
-            Ref: DefaultSGtesttemplateext
+            Ref: DefaultSG{{cookiecutter.dns_name | lower | replace('-', '') |replace('.', '') | replace('_', '')}}
       MySaltSG:
         - IpProtocol: tcp
           FromPort: 4505
@@ -44,19 +45,21 @@ dev:
           SourceSecurityGroupId:
             Ref: MyBaseSG
   elb:
-    - name: test-template-ext
+    - name: {{cookiecutter.dns_name}}
       # This zone must exist in the AWS account you are using.
-      hosted_zone: mmb.et.dsd.io.
+      hosted_zone: {{cookiecutter.master_zone}}.
       scheme: internet-facing
-      # This should match the name of a certificate in the ssl section.
-      certificate_name: my-cert
       listeners:
         - LoadBalancerPort: 80
           InstancePort: 80
           Protocol: TCP
+{% if cookiecutter.with_ssl  != "False" %}
         - LoadBalancerPort: 443
           InstancePort: 80
           Protocol: HTTPS
+      # This should match the name of a certificate in the ssl section.
+      certificate_name: my-cert
+{% endif %}
       # There is a default security group called 'DefaultSG' + elb name (with
       # '_' and '-' removed). Below is the default if no 'security_groups' key
       # is present.
@@ -75,8 +78,12 @@ dev:
   # to deploy easily from Jenkins
   includes:
     - ./cloudformation/iam-deploy.json
-  s3:
-    static-bucket-name: mmb-test
+  github_users:
+    ministryofjustice:
+      teams:
+      - webops
+  s3: {}
+{% if cookiecutter.with_rds != "False" %}
   rds:
     storage: 5
     storage-type: gp2
@@ -89,6 +96,8 @@ dev:
     multi-az: false
     db-engine: postgres
     db-engine-version: 9.3.5
+{% endif %}
+{% if cookiecutter.with_ssl != "False" %}
   ssl:
     # This is the name of the certificate to reference in the elb section.
     my-cert:
@@ -97,11 +106,8 @@ dev:
         blahblahblah
         -----END CERTIFICATE-----
       # This should live in the encrypted secrets file, but the cert and chain are fine here.
-      key: |
-        -----BEGIN RSA PRIVATE KEY-----
-        blahblahblah
-        -----END RSA PRIVATE KEY-----
       chain: |
         -----BEGIN CERTIFICATE-----
         blahblahblah
         -----END CERTIFICATE-----
+{% endif %}

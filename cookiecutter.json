@@ -1,6 +1,12 @@
 {
-    "project_name": "myproject",
+    "project_name": "helloworld",
     "environment": "dev",
-    "project_apps": "[{{ cookiecutter.project_name|lower|replace(' ', '-') }}]",
-    "project_short_description": "The is my project"
+    "project_description": "The is the {{ cookiecutter.project_name }} project",
+    "master_zone": "dsd.io",
+    "dns_name": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}-{{ cookiecutter.environment }}",
+    "with_ssl": false,
+    "with_rds": false,
+    "project_apps": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
+    "docker_registry": "registry.service.dsd.io",
+    "docker_container": "{{ cookiecutter.project_apps }}"
 }
