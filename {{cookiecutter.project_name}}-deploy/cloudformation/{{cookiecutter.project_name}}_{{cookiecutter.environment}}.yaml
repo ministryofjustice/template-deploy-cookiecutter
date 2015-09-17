@@ -53,7 +53,7 @@ dev:
         - LoadBalancerPort: 80
           InstancePort: 80
           Protocol: TCP
-{% if cookiecutter.with_ssl  != "False" %}
+{% if cookiecutter.with_ssl  == "True" %}
         - LoadBalancerPort: 443
           InstancePort: 80
           Protocol: HTTPS
@@ -83,7 +83,7 @@ dev:
       teams:
       - webops
   s3: {}
-{% if cookiecutter.with_rds != "False" %}
+{% if cookiecutter.with_rds == "True" %}
   rds:
     storage: 5
     storage-type: gp2
@@ -97,7 +97,7 @@ dev:
     db-engine: postgres
     db-engine-version: 9.3.5
 {% endif %}
-{% if cookiecutter.with_ssl != "False" %}
+{% if cookiecutter.with_ssl == "True" %}
   ssl:
     # This is the name of the certificate to reference in the elb section.
     {{cookiecutter.project_name}}_{{cookiecutter.environment}}-cert:

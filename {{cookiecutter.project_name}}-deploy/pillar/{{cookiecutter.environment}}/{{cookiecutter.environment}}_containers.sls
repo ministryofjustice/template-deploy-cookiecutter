@@ -35,12 +35,4 @@ docker_envs:
         # note you get some free variables for database details etc.
         envvars:
           ENV_VAR1: value
-
-  stunnel:
-        location: /stunnel
-        name: platforms/stunnel
-        ports:
-          app:
-            host: 6379
-            container: 6379
          

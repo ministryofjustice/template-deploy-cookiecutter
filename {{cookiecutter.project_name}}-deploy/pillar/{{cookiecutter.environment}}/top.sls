@@ -2,13 +2,14 @@ base:
   'Env:{{cookiecutter.environment}}':
     - match: grain
     - cloudformation
-    - {{cookiecutter.environment}}.sls
-    - {{cookiecutter.environment}}-secrets.sls
-    - {{cookiecutter.environment}}_containers.sls
-    - {{cookiecutter.environment}}_containers-secrets.sls
-{% if cookiecutter.with_monitoring != False %}
-    - {{cookiecutter.environment}}_monitoring.sls
-    - {{cookiecutter.environment}}_monitoring-secrets.sls
+    - keys
+    - {{cookiecutter.environment}}
+    - {{cookiecutter.environment}}-secrets
+    - {{cookiecutter.environment}}_containers
+    - {{cookiecutter.environment}}_containers-secrets
+{% if cookiecutter.with_monitoring == "True" %}
+    - {{cookiecutter.environment}}_monitoring
+    - {{cookiecutter.environment}}_monitoring-secrets
 {% endif %}
 
 {% raw %}
