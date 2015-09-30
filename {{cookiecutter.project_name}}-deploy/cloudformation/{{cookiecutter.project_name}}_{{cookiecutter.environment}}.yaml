@@ -7,7 +7,7 @@ dev:
       min: 0
     tags:
       Role: docker
-      Apps: {{cookiecutter.project_apps}}
+      Apps: {{cookiecutter.project_name}}
     parameters:
       KeyName: default
       InstanceType: t2.micro
@@ -53,27 +53,13 @@ dev:
         - LoadBalancerPort: 80
           InstancePort: 80
           Protocol: TCP
-{% if cookiecutter.with_ssl  == "True" %}
+{% if cookiecutter.with_ssl  == True %}
         - LoadBalancerPort: 443
           InstancePort: 80
           Protocol: HTTPS
       # This should match the name of a certificate in the ssl section.
       certificate_name: my-cert
 {% endif %}
-      # There is a default security group called 'DefaultSG' + elb name (with
-      # '_' and '-' removed). Below is the default if no 'security_groups' key
-      # is present.
-      #
-      # security_groups:
-      #   DefaultSGtesttemplateext:
-      #       - IpProtocol: tcp
-      #         FromPort: 443
-      #         ToPort: 443
-      #         CidrIp: 0.0.0.0/0
-      #       - IpProtocol: tcp
-      #         FromPort: 80
-      #         ToPort: 80
-      #         CidrIp: 0.0.0.0/0
   # This includes some extra permissions which makes it possible
   # to deploy easily from Jenkins
   includes:
@@ -83,21 +69,23 @@ dev:
       teams:
       - webops
   s3: {}
-{% if cookiecutter.with_rds == "True" %}
+{% if cookiecutter.with_rds == True %}
   rds:
     storage: 5
     storage-type: gp2
     backup-retention-period: 1
-    db-name: test
-    db-master-username: testuser
+    db-name: {{cookiecutter.project_name}}_{{cookiecutter.environment}}
+    db-master-username: {{cookiecutter.project_name}}
     # This should live in the encrypted secrets file
-    db-master-password: testpass
     instance-class: db.t2.micro
     multi-az: false
     db-engine: postgres
     db-engine-version: 9.3.5
 {% endif %}
-{% if cookiecutter.with_ssl == "True" %}
+{% if cookiecutter.with_elasticache == True %}
+  elasticache: {}
+{% endif %}
+{% if cookiecutter.with_ssl == True %}
   ssl:
     # This is the name of the certificate to reference in the elb section.
     {{cookiecutter.project_name}}_{{cookiecutter.environment}}-cert:
