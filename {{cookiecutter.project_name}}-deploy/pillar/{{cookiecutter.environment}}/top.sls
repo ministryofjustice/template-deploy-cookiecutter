@@ -7,7 +7,7 @@ base:
     - {{cookiecutter.environment}}-secrets
     - {{cookiecutter.environment}}_containers
     - {{cookiecutter.environment}}_containers-secrets
-{% if cookiecutter.with_monitoring == "True" %}
+{% if cookiecutter.with_monitoring == True %}
     - {{cookiecutter.environment}}_monitoring
     - {{cookiecutter.environment}}_monitoring-secrets
 {% endif %}

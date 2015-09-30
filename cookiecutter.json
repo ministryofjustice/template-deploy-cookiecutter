@@ -5,8 +5,7 @@
 "project_description": "The is the {{ cookiecutter.project_name }} project",
 "master_zone": "dsd.io",
 "dns_name": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}-{{ cookiecutter.environment }}",
-"project_apps": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
-"docker_container": "{{ cookiecutter.project_apps }}",
+"containers": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
 "registry_user": "",
 "registry_password": ""
 }
