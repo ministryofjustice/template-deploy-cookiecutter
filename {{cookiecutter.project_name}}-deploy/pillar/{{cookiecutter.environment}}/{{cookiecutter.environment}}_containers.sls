@@ -1,5 +1,5 @@
 docker_envs:
-  {{cookiecutter.project_name}}.{{cookiecutter.master_zone}}:
+  {{cookiecutter.dns_name}}.{{cookiecutter.master_zone}}:
     nginx_port: 80
     ssl:
       redirect: True

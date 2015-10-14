@@ -1,5 +1,5 @@
 docker_envs:
-  {{cookiecutter.project_name}}.{{cookiecutter.master_zone}}:
+  {{cookiecutter.dns_name}}.{{cookiecutter.master_zone}}:
     containers:
       stunnel:
         location: /stunnel
